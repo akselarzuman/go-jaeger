@@ -53,7 +53,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/test", ArticlesCategoryHandler).Methods(http.MethodGet, http.MethodOptions)
 	r.Use(mux.CORSMethodMiddleware(r))
-	r.Use(middlewares.CustomMiddleware)
+	r.Use(middlewares.ContentTypeMiddleware)
 
 	http.ListenAndServe(":5000", r)
 }
