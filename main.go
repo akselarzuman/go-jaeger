@@ -13,15 +13,15 @@ import (
 
 func main() {
 	configuration.InitializeEnv()
-	tracer, closer := jaegerwrapper.NewFromEnv()
+	closer := jaegerwrapper.NewFromEnv()
 	defer (*closer).Close()
 
 	http.HandleFunc("/publish", func(w http.ResponseWriter, r *http.Request) {
-		// tracer := opentracing.GlobalTracer()
+		tracer := opentracing.GlobalTracer()
 
 		// Extract the context from the headers
-		spanCtx, _ := (*tracer).Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(r.Header))
-		serverSpan := (*tracer).StartSpan("server", ext.RPCServerOption(spanCtx))
+		spanCtx, _ := tracer.Extract(opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(r.Header))
+		serverSpan := tracer.StartSpan("server", ext.RPCServerOption(spanCtx))
 		defer serverSpan.Finish()
 	})
 

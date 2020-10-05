@@ -12,7 +12,7 @@ import (
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 )
 
-func New() (*opentracing.Tracer, *io.Closer) {
+func New() *io.Closer {
 	cfg := jaegercfg.Configuration{
 		ServiceName: "uber-api",
 		Sampler: &jaegercfg.SamplerConfig{
@@ -46,10 +46,10 @@ func New() (*opentracing.Tracer, *io.Closer) {
 	opentracing.SetGlobalTracer(tracer)
 	// defer closer.Close()
 
-	return &tracer, &closer
+	return &closer
 }
 
-func NewFromEnv() (*opentracing.Tracer, *io.Closer) {
+func NewFromEnv() *io.Closer {
 	cfg, err := jaegercfg.FromEnv()
 	if err != nil {
 		// parsing errors might happen here, such as when we get a string where we expect a number
@@ -76,5 +76,5 @@ func NewFromEnv() (*opentracing.Tracer, *io.Closer) {
 
 	opentracing.SetGlobalTracer(tracer)
 
-	return &tracer, &closer
+	return &closer
 }
