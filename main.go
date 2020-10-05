@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/akselarzuman/go-jaeger/jaegerwrapper"
 	"github.com/akselarzuman/go-jaeger/middlewares"
+
 	"github.com/gorilla/mux"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -18,37 +20,12 @@ import (
 )
 
 func main() {
-	cfg := jaegercfg.Configuration{
-		ServiceName: "your_service_name",
-		Sampler: &jaegercfg.SamplerConfig{
-			Type:  jaeger.SamplerTypeConst,
-			Param: 1,
-		},
-		Reporter: &jaegercfg.ReporterConfig{
-			LogSpans: true,
-		},
-	}
+	tracer, closer := jaegerwrapper.New()
+	// defer *closer).Close()
 
-	// Example logger and metrics factory. Use github.com/uber/jaeger-client-go/log
-	// and github.com/uber/jaeger-lib/metrics respectively to bind to real logging and metrics
-	// frameworks.
-	jLogger := jaegerlog.StdLogger
-	jMetricsFactory := metrics.NullFactory
+	defer (*closer).Close()
 
-	// Initialize tracer with a logger and a metrics factory
-	tracer, closer, err := cfg.NewTracer(
-		jaegercfg.Logger(jLogger),
-		jaegercfg.Metrics(jMetricsFactory),
-	)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	// Set the singleton opentracing.Tracer with the Jaeger tracer.
-	opentracing.SetGlobalTracer(tracer)
-	defer closer.Close()
+	fmt.Println(tracer)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/test", ArticlesCategoryHandler).Methods(http.MethodGet, http.MethodOptions)
