@@ -14,7 +14,7 @@ import (
 
 func New() (*opentracing.Tracer, *io.Closer) {
 	cfg := jaegercfg.Configuration{
-		ServiceName: "your_service_name",
+		ServiceName: "uber-api",
 		Sampler: &jaegercfg.SamplerConfig{
 			Type:  jaeger.SamplerTypeConst,
 			Param: 1,
@@ -45,6 +45,36 @@ func New() (*opentracing.Tracer, *io.Closer) {
 	// Set the singleton opentracing.Tracer with the Jaeger tracer.
 	opentracing.SetGlobalTracer(tracer)
 	// defer closer.Close()
+
+	return &tracer, &closer
+}
+
+func NewFromEnv() (*opentracing.Tracer, *io.Closer) {
+	cfg, err := jaegercfg.FromEnv()
+	if err != nil {
+		// parsing errors might happen here, such as when we get a string where we expect a number
+		fmt.Printf("Could not parse Jaeger env vars: %s", err.Error())
+		panic(err)
+	}
+
+	// Example logger and metrics factory. Use github.com/uber/jaeger-client-go/log
+	// and github.com/uber/jaeger-lib/metrics respectively to bind to real logging and metrics
+	// frameworks.
+	jLogger := jaegerlog.StdLogger
+	jMetricsFactory := metrics.NullFactory
+
+	tracer, closer, err := (*cfg).NewTracer(
+		jaegercfg.Logger(jLogger),
+		jaegercfg.Metrics(jMetricsFactory),
+	)
+
+	if err != nil {
+		fmt.Println(err.Error())
+
+		panic(err)
+	}
+
+	opentracing.SetGlobalTracer(tracer)
 
 	return &tracer, &closer
 }
