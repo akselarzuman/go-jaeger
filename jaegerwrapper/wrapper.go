@@ -44,7 +44,6 @@ func New() *io.Closer {
 
 	// Set the singleton opentracing.Tracer with the Jaeger tracer.
 	opentracing.SetGlobalTracer(tracer)
-	// defer closer.Close()
 
 	return &closer
 }
@@ -63,6 +62,7 @@ func NewFromEnv() *io.Closer {
 	jLogger := jaegerlog.StdLogger
 	jMetricsFactory := metrics.NullFactory
 
+	// Initialize tracer with a logger and a metrics factory
 	tracer, closer, err := (*cfg).NewTracer(
 		jaegercfg.Logger(jLogger),
 		jaegercfg.Metrics(jMetricsFactory),
@@ -74,6 +74,7 @@ func NewFromEnv() *io.Closer {
 		panic(err)
 	}
 
+	// Set the singleton opentracing.Tracer with the Jaeger tracer.
 	opentracing.SetGlobalTracer(tracer)
 
 	return &closer
