@@ -11,21 +11,26 @@ import (
 	"time"
 
 	"github.com/akselarzuman/go-jaeger/api/router"
+	"github.com/akselarzuman/go-jaeger/internal/pkg/jaeger"
 	"github.com/joho/godotenv"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
 	initEnv()
-	app := router.Setup()
+	tracer, closer := jaeger.Init("uber-api")
+	defer closer.Close()
+	// Set the singleton opentracing.Tracer with the Jaeger tracer.
+	opentracing.SetGlobalTracer(tracer)
 
-	address := ":1000"
+	app := router.Setup()
 
 	// graceful shutdown
 	signalCh := make(chan os.Signal, 2)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 
 	server := &http.Server{
-		Addr:    address,
+		Addr:    ":1000",
 		Handler: app,
 	}
 
