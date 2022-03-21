@@ -1,8 +1,8 @@
 package jaegerwrapper
 
 import (
-	"fmt"
 	"io"
+	"log"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-lib/metrics"
@@ -37,9 +37,7 @@ func New() *io.Closer {
 	)
 
 	if err != nil {
-		fmt.Println(err.Error())
-
-		panic(err)
+		log.Fatal(err.Error())
 	}
 
 	// Set the singleton opentracing.Tracer with the Jaeger tracer.
@@ -51,9 +49,7 @@ func New() *io.Closer {
 func NewFromEnv() *io.Closer {
 	cfg, err := jaegercfg.FromEnv()
 	if err != nil {
-		// parsing errors might happen here, such as when we get a string where we expect a number
-		fmt.Printf("Could not parse Jaeger env vars: %s", err.Error())
-		panic(err)
+		log.Fatal(err.Error())
 	}
 
 	// Example logger and metrics factory. Use github.com/uber/jaeger-client-go/log
@@ -63,15 +59,13 @@ func NewFromEnv() *io.Closer {
 	jMetricsFactory := metrics.NullFactory
 
 	// Initialize tracer with a logger and a metrics factory
-	tracer, closer, err := (*cfg).NewTracer(
+	tracer, closer, err := cfg.NewTracer(
 		jaegercfg.Logger(jLogger),
 		jaegercfg.Metrics(jMetricsFactory),
 	)
 
 	if err != nil {
-		fmt.Println(err.Error())
-
-		panic(err)
+		log.Fatal(err.Error())
 	}
 
 	// Set the singleton opentracing.Tracer with the Jaeger tracer.
