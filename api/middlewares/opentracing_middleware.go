@@ -37,9 +37,9 @@ func OpentracingMiddlewareGin() gin.HandlerFunc {
 		if parentSpanContext, err := tracer.Extract(
 			opentracing.HTTPHeaders,
 			opentracing.HTTPHeadersCarrier(c.Request.Header)); err != nil {
-			span = tracer.StartSpan(c.Request.URL.Path)
+			span = tracer.StartSpan(c.Request.URL.Path, opentracing.Tag{Key: "user-agent", Value: c.Request.UserAgent()})
 		} else {
-			span = tracer.StartSpan(c.Request.URL.Path, opentracing.ChildOf(parentSpanContext))
+			span = tracer.StartSpan(c.Request.URL.Path, opentracing.ChildOf(parentSpanContext), opentracing.Tag{Key: "user-agent", Value: c.Request.UserAgent()})
 		}
 
 		defer span.Finish()
