@@ -46,7 +46,7 @@ func New() *io.Closer {
 	return &closer
 }
 
-func NewFromEnv() *io.Closer {
+func NewFromEnv() io.Closer {
 	cfg, err := jaegercfg.FromEnv()
 	if err != nil {
 		log.Fatal(err.Error())
@@ -71,5 +71,5 @@ func NewFromEnv() *io.Closer {
 	// Set the singleton opentracing.Tracer with the Jaeger tracer.
 	opentracing.SetGlobalTracer(tracer)
 
-	return &closer
+	return closer
 }
