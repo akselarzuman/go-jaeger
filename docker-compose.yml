@@ -9,6 +9,13 @@ services:
     networks:
       - uber
 
+  mongo:
+    image: mongo:5.0.6
+    ports:
+      - 27017:27017
+    networks:
+      - uber
+
   api:
     build:
       context: .
@@ -20,6 +27,7 @@ services:
       - JAEGER_SERVICE_NAME=uber-api
       - JAEGER_URL=http://jaeger:14268/api/traces
       - ENVIRONMENT=development
+      - MONGO_URL=mongodb://mongo:27017
     ports:
       - 8080:8080
     networks:
