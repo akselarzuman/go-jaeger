@@ -7,6 +7,7 @@ import (
 
 	"github.com/akselarzuman/go-jaeger/internal/pkg/persistence"
 	"github.com/akselarzuman/go-jaeger/internal/pkg/persistence/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserService struct {
@@ -25,6 +26,7 @@ func NewUserService() *UserService {
 
 func (s *UserService) Add(ctx context.Context, name, surname, email, password string) error {
 	err := s.userRepository.Add(ctx, &models.User{
+		ID:        primitive.NewObjectID(),
 		Name:      name,
 		Surname:   surname,
 		Email:     email,

@@ -8,6 +8,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
 type Mongo struct {
@@ -17,7 +18,11 @@ type Mongo struct {
 func NewMongo() *Mongo {
 	uri := os.Getenv("MONGO_URL")
 
-	c, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	opt := options.Client().
+		SetMonitor(otelmongo.NewMonitor()).
+		ApplyURI(uri)
+
+	c, err := mongo.NewClient(opt)
 	if err != nil {
 		log.Fatal(err.Error())
 		return nil
