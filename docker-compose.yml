@@ -16,8 +16,12 @@ services:
     container_name: jaeger-test-api
     depends_on:
       - jaeger
+    environment:
+      - JAEGER_SERVICE_NAME=uber-api
+      - JAEGER_URL=http://jaeger:14268/api/traces
+      - ENVIRONMENT=development
     ports:
-      - 5000:5000
+      - 8080:8080
     networks:
       - uber
 

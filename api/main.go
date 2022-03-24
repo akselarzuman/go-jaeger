@@ -41,7 +41,7 @@ func main() {
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 
 	server := &http.Server{
-		Addr:    ":1000",
+		Addr:    ":8080",
 		Handler: app,
 	}
 
