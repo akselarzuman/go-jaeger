@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
@@ -20,7 +21,7 @@ func HealthCheck(c *gin.Context) {
 		jlog.String("surname", "Arzuman"),
 	)
 
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "ok",
 	})
 }
