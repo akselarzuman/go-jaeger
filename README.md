@@ -1,5 +1,5 @@
 # go-jaeger
-A simple implementation of [Golang opentracing](https://opentracing.io/guides/golang/quick-start) with [Jaeger](https://www.jaegertracing.io).
+A simple implementation of [Golang OpenTelemetry](https://opentelemetry.io/docs/instrumentation/go) with [Jaeger](https://www.jaegertracing.io).
 
 ## How to Run
 ### Using Docker Compose

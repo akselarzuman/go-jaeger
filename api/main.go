@@ -11,17 +11,28 @@ import (
 	"time"
 
 	"github.com/akselarzuman/go-jaeger/api/router"
-	"github.com/akselarzuman/go-jaeger/internal/pkg/jaeger"
+	"github.com/akselarzuman/go-jaeger/internal/pkg/opentelemetry"
 	"github.com/joho/godotenv"
-	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
 	initEnv()
-	tracer, closer := jaeger.Init("uber-api")
-	defer closer.Close()
-	// Set the singleton opentracing.Tracer with the Jaeger tracer.
-	opentracing.SetGlobalTracer(tracer)
+
+	tp, err := opentelemetry.NewJaegerTraceProvider()
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	if tp != nil {
+		defer func() {
+			// Cleanly shutdown and flush telemetry when the application exits.
+			exitCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := tp.Shutdown(exitCtx); err != nil {
+				log.Println(err.Error())
+			}
+		}()
+	}
 
 	app := router.Setup()
 
@@ -30,7 +41,7 @@ func main() {
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 
 	server := &http.Server{
-		Addr:    ":1000",
+		Addr:    ":8080",
 		Handler: app,
 	}
 
