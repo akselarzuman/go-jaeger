@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/akselarzuman/go-jaeger/api/models"
+	"github.com/akselarzuman/go-jaeger/internal/pkg/opentelemetry"
 	"github.com/akselarzuman/go-jaeger/internal/pkg/services"
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +28,11 @@ func (ctr *UserController) Add(c *gin.Context) {
 		return
 	}
 
-	if err := ctr.userService.Add(c.Request.Context(), req.Name, req.Surname, req.Email, req.Password); err != nil {
+	ctx, span := opentelemetry.NewSpan(c.Request.Context(), "UserController.Add")
+	defer span.End()
+
+	if err := ctr.userService.Add(ctx, req.Name, req.Surname, req.Email, req.Password); err != nil {
+		opentelemetry.AddSpanError(span, err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
