@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/joho/godotenv v1.4.0
-	github.com/opentracing/opentracing-go v1.2.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.30.0
 	go.opentelemetry.io/otel v1.6.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.6.0
