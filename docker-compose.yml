@@ -1,20 +1,63 @@
 version: "3.8"
 services:
-  jaeger:
-    image: jaegertracing/all-in-one:1.32
-    container_name: jaeger
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:1.32
+    container_name: jaeger-collector
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+    command: 
+      - "--es.server-urls=http://elasticsearch:9200"
+      # - "--sampling.initial-sampling-probability=.5"
+      # - "--sampling.target-samples-per-second=.01"
     ports:
-      - 16686:16686
       - 14268:14268
-    networks:
-      - uber
+      - 14269:14269 # health check
+      # - 14250 # jaeger agent
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+  
+  jaeger-query:
+    image: jaegertracing/jaeger-query:1.32
+    container_name: jaeger-query
+    restart: on-failure
+    command:
+      - "--es.server-urls=http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    ports:
+      - 16686:16686 # /api/* endpoints and Jaeger UI at /
+      - 16687:16687 # health check
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
 
   mongo:
     image: mongo:5.0.6
+    container_name: mongo
     ports:
       - 27017:27017
-    networks:
-      - uber
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    restart: on-failure
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
 
   api:
     build:
@@ -30,9 +73,3 @@ services:
       - MONGO_URL=mongodb://mongo:27017
     ports:
       - 8080:8080
-    networks:
-      - uber
-
-networks:
-  uber:
-    driver: bridge
