@@ -10,3 +10,7 @@ There will be two applications running on multiple ports, however, ports 5000 an
 Port <b>16686</b> is the Jaegers' UI and <b>5000</b> is a sample API.
 
 Once you redirect to `localhost:5000/publish`, you can see your record on Jaeger UI.
+
+## Using Kubernetes
+* `make start-minikube`
+* `make list-namespaces` and check if monitoring namespace is created. If not, run `make create-namespace` to create monitoring namespace.
