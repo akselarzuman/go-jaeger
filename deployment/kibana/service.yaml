@@ -11,4 +11,4 @@ spec:
     - protocol: TCP
       port: 5601
       targetPort: 5601
-      nodePort: 30100 # Range is btw 30000 and 32767
+      # nodePort: 30100 # Range is btw 30000 and 32767
