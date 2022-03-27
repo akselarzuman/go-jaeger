@@ -24,7 +24,6 @@ spec:
         env:
           - name: "SPAN_STORAGE_TYPE"
             value: "elasticsearch"
-        command:
-          - "--es.server-urls=http://elasticsearch-service:9200"
+        args: ["--es.server-urls=http://elasticsearch-service:9200"]
         # nodeSelector:
         #   node_group: monitoring-ng
