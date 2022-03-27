@@ -28,7 +28,9 @@ deploy-jaeger-collector:
 deploy-jaeger-query:
 	kubectl apply -f ./deployment/jaeger-query/deployment.yaml && kubectl apply -f ./deployment/jaeger-query/service.yaml
 
-deploy: deploy-elasticsearch deploy-kibana deploy-jaeger-collector deploy-jaeger-query
+deploy-jaeger: deploy-jaeger-collector deploy-jaeger-query
+
+deploy: deploy-elasticsearch deploy-kibana deploy-jaeger
 
 forward-kibana:
 	kubectl port-forward deployment/kibana-deployment 5601:5601
