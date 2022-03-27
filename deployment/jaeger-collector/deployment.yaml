@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-collector-deployment
+  namespace: default
+  labels:
+    app: jaeger-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger-collector
+  template:
+    metadata:
+      labels:
+        app: jaeger-collector
+    spec:
+      containers:
+      - name: jaeger-collector
+        image: jaegertracing/jaeger-collector:1.32
+        ports:
+        - containerPort: 14268
+        - containerPort: 14269
+        env:
+          - name: "SPAN_STORAGE_TYPE"
+            value: "elasticsearch"
+        command:
+          - "--es.server-urls=http://elasticsearch-service:9200"
+        # nodeSelector:
+        #   node_group: monitoring-ng

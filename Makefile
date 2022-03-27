@@ -22,10 +22,22 @@ deploy-elasticsearch:
 deploy-kibana:
 	kubectl apply -f ./deployment/kibana/deployment.yaml && kubectl apply -f ./deployment/kibana/service.yaml
 
-deploy: deploy-elasticsearch deploy-kibana
+deploy-jaeger-collector:
+	kubectl apply -f ./deployment/jaeger-collector/deployment.yaml && kubectl apply -f ./deployment/jaeger-collector/service.yaml
+
+deploy-jaeger-query:
+	kubectl apply -f ./deployment/jaeger-query/deployment.yaml && kubectl apply -f ./deployment/jaeger-query/service.yaml
+
+deploy: deploy-elasticsearch deploy-kibana deploy-jaeger-collector deploy-jaeger-query
 
 forward-kibana:
 	kubectl port-forward deployment/kibana-deployment 5601:5601
+
+forward-collector:
+	kubectl port-forward deployment/jaeger-collector-deployment 14268:14268
+
+forward-query:
+	kubectl port-forward deployment/jaeger-query-deployment 16686:16686
 
 list-all:
 	kubectl get all
