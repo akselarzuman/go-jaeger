@@ -2,7 +2,7 @@ start-env:
 	docker compose up
 
 start-minikube:
-	minikube start --driver docker
+	minikube start --driver=docker
 
 stop-minikube:
 	minikube stop
@@ -21,6 +21,8 @@ deploy-elasticsearch:
 
 deploy-kibana:
 	kubectl apply -f ./deployment/kibana/deployment.yaml && kubectl apply -f ./deployment/kibana/service.yaml
+
+deploy: deploy-elasticsearch deploy-kibana
 
 forward-kibana:
 	kubectl port-forward deployment/kibana-deployment 5601:5601

@@ -12,3 +12,4 @@ spec:
       port: 5601
       targetPort: 5601
       # nodePort: 30100 # Range is btw 30000 and 32767
+      # Traffic comes in on 'nodePort', forwards to 'port' on the service which then routes to 'targetPort' on the pod(s).
