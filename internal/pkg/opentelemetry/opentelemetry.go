@@ -6,6 +6,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
@@ -39,6 +40,10 @@ func NewJaegerTraceProvider() (*tracesdk.TracerProvider, error) {
 	// Register our TracerProvider as the global so any imported
 	// instrumentation in the future will default to using it.
 	otel.SetTracerProvider(tp)
+
+	// To trace external requests, we need to use the context propagation
+	// https://opentelemetry.io/docs/instrumentation/go/manual/#propagators-and-context
+	otel.SetTextMapPropagator(propagation.TraceContext{})
 
 	return tp, nil
 }

@@ -9,4 +9,8 @@ There will be two applications running on multiple ports, however, ports 8080 an
 
 Port <b>16686</b> is the Jaegers' UI and <b>8080</b> is a sample API.
 
-Once you redirect to [localhost:8080/health_check](localhost:8080/health_check), you can see your record on Jaeger UI.
+Once you redirect to `localhost:5000/publish`, you can see your record on Jaeger UI.
+
+## Using Kubernetes
+* `make start-minikube`
+* `make list-namespaces` and check if monitoring namespace is created. If not, run `make create-namespace` to create monitoring namespace.
