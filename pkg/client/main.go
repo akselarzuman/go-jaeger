@@ -11,6 +11,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
+// this snippet makes an HTTP request to the API
 func main() {
 	tp, err := opentelemetry.NewJaegerTraceProvider()
 	if err != nil {
