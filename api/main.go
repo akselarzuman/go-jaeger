@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/akselarzuman/go-jaeger/api/router"
+	"github.com/akselarzuman/go-jaeger/internal/pkg/db"
 	"github.com/akselarzuman/go-jaeger/internal/pkg/opentelemetry"
 	"github.com/joho/godotenv"
 )
@@ -33,6 +34,8 @@ func main() {
 			}
 		}()
 	}
+
+	initResources()
 
 	app := router.Setup()
 
@@ -68,6 +71,16 @@ func main() {
 func initEnv() {
 	if err := godotenv.Load(path.Join(getRootPath(), "/.env")); err != nil {
 		log.Println("Error while opening .env file", err.Error())
+	}
+}
+
+func initResources() {
+	if p := db.NewPostgresClient(); p != nil {
+		log.Println("postgres client created")
+
+		if err := p.AutoMigrate(); err != nil {
+			log.Println("error while auto migrating", err.Error())
+		}
 	}
 }
 
