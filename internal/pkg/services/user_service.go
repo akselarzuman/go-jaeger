@@ -11,7 +11,8 @@ import (
 )
 
 type UserService struct {
-	userRepository persistence.UserRepositoryInterface
+	userRepository         persistence.UserRepositoryInterface
+	userRepositoryPostgres persistence.UserRepositoryPostgresInterface
 }
 
 type UserServiceInterface interface {
@@ -20,7 +21,8 @@ type UserServiceInterface interface {
 
 func NewUserService() *UserService {
 	return &UserService{
-		userRepository: persistence.NewUserRepository(),
+		userRepository:         persistence.NewUserRepository(),
+		userRepositoryPostgres: persistence.NewUserRepositoryPostgres(),
 	}
 }
 
@@ -38,7 +40,22 @@ func (s *UserService) Add(ctx context.Context, name, surname, email, password st
 
 	if err != nil {
 		log.Println(err.Error())
+		return err
 	}
 
-	return err
+	err = s.userRepositoryPostgres.Add(ctx, &models.UserPostgresModel{
+		Name:      name,
+		Surname:   surname,
+		Email:     email,
+		Password:  password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
 }
