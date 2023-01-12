@@ -35,6 +35,7 @@ func NewJaegerTraceProvider() (*tracesdk.TracerProvider, error) {
 			attribute.String("environment", os.Getenv("ENVIRONMENT")),
 			// attribute.Int64("ID", id),
 		)),
+		tracesdk.WithSampler(tracesdk.ParentBased(tracesdk.TraceIDRatioBased(0.1))), // 10% of traces sampled
 	)
 
 	// Register our TracerProvider as the global so any imported
