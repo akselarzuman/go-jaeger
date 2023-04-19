@@ -1,5 +1,5 @@
 start-env:
-	docker compose up
+	docker compose up --build -d
 
 start-minikube:
 	minikube start --driver=docker

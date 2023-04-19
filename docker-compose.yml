@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.32
+    image: jaegertracing/jaeger-collector:1.44
     container_name: jaeger-collector
     restart: on-failure
     depends_on:
@@ -18,7 +18,7 @@ services:
       - SPAN_STORAGE_TYPE=elasticsearch
   
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.32
+    image: jaegertracing/jaeger-query:1.44
     container_name: jaeger-query
     restart: on-failure
     command:
@@ -32,13 +32,13 @@ services:
       - SPAN_STORAGE_TYPE=elasticsearch
 
   mongo:
-    image: mongo:5.0.6
+    image: mongo:5.0
     container_name: mongo
     ports:
       - 27017:27017
 
   postgres:
-    image: postgres:12.10
+    image: postgres:15.2-alpine
     environment:
       POSTGRES_PASSWORD: example
       POSTGRES_USER: postgres
@@ -74,11 +74,17 @@ services:
       dockerfile: Dockerfile
     container_name: jaeger-test-api
     depends_on:
-      - jaeger
+      - jaeger-collector
+      - jaeger-query
+      - mongo
+      - postgres
     environment:
       - JAEGER_SERVICE_NAME=uber-api
-      - JAEGER_URL=http://jaeger:14268/api/traces
+      - JAEGER_URL=http://jaeger-collector:14268/api/traces
       - ENVIRONMENT=development
       - MONGO_URL=mongodb://mongo:27017
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=example
     ports:
       - 8080:8080

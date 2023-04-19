@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 	"log"
-	l "log"
 
 	"github.com/akselarzuman/go-jaeger/internal/pkg/persistence/models"
 	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
@@ -21,11 +20,11 @@ type PostgresClient struct {
 }
 
 func NewPostgresClient() *PostgresClient {
-	dsn := fmt.Sprintf("host=localhost user=postgres password=example dbname=uber port=5432 application_name=dashboardapi sslmode=disable TimeZone=utc")
+	dsn := fmt.Sprintf("host=%v user=%v password=%v dbname=uber port=5432 application_name=uberapi sslmode=disable TimeZone=utc", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"))
 
 	gormDB, err := gorm.Open(pd.Open(dsn), &gorm.Config{
 		Logger: logger.New(
-			l.New(os.Stdout, "\r\n", l.LstdFlags), // io writer
+			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 			logger.Config{
 				SlowThreshold: time.Second, // Slow SQL threshold
 				LogLevel:      logger.Info, // Log level
