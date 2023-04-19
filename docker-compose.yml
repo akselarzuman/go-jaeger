@@ -43,6 +43,11 @@ services:
       POSTGRES_PASSWORD: example
       POSTGRES_USER: postgres
       POSTGRES_DB: uber
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     ports:
      - 5432:5432
 
@@ -74,10 +79,14 @@ services:
       dockerfile: Dockerfile
     container_name: jaeger-test-api
     depends_on:
-      - jaeger-collector
-      - jaeger-query
-      - mongo
-      - postgres
+      postgres:
+        condition: service_healthy
+      jaeger-collector:
+        condition: service_started
+      jaeger-query:
+        condition: service_started
+      mongo:
+        condition: service_started
     environment:
       - JAEGER_SERVICE_NAME=uber-api
       - JAEGER_URL=http://jaeger-collector:14268/api/traces
