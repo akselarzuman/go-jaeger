@@ -64,28 +64,12 @@ func (con *RedisConnection) Ping(ctx context.Context) *redis.StatusCmd {
 	return con.redisClient.Ping(ctx)
 }
 
-func (con *RedisConnection) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.StatusCmd {
-	if con.isCluster {
-		return con.clusterClient.Set(ctx, key, value, expiration)
+func (c *RedisConnection) Incr(ctx context.Context, key string) *redis.IntCmd {
+	if c.isCluster {
+		return c.clusterClient.Incr(ctx, key)
 	}
 
-	return con.redisClient.Set(ctx, key, value, expiration)
-}
-
-func (con *RedisConnection) Get(ctx context.Context, key string) *redis.StringCmd {
-	if con.isCluster {
-		return con.clusterClient.Get(ctx, key)
-	}
-
-	return con.redisClient.Get(ctx, key)
-}
-
-func (con *RedisConnection) Del(ctx context.Context, key string) *redis.IntCmd {
-	if con.isCluster {
-		return con.clusterClient.Del(ctx, key)
-	}
-
-	return con.redisClient.Del(ctx, key)
+	return c.redisClient.Incr(ctx, key)
 }
 
 func (con *RedisConnection) Close() {

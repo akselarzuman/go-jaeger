@@ -19,11 +19,6 @@ func NewUserRedis() *UserRedis {
 func (r *UserRedis) IncrUserCount(ctx context.Context) error {
 	const key = "user_count"
 
-	if r.redisClient.isCluster {
-		_, err := r.redisClient.clusterClient.Incr(ctx, key).Result()
-		return err
-	}
-
-	_, err := r.redisClient.redisClient.Incr(ctx, key).Result()
+	_, err := r.redisClient.Incr(ctx, key).Result()
 	return err
 }
