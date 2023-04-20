@@ -13,6 +13,7 @@ import (
 	"github.com/akselarzuman/go-jaeger/api/router"
 	"github.com/akselarzuman/go-jaeger/internal/pkg/db"
 	"github.com/akselarzuman/go-jaeger/internal/pkg/opentelemetry"
+	"github.com/akselarzuman/go-jaeger/internal/pkg/redis"
 	"github.com/joho/godotenv"
 )
 
@@ -81,6 +82,18 @@ func initResources() {
 		if err := p.AutoMigrate(); err != nil {
 			log.Println("error while auto migrating", err.Error())
 		}
+	}
+
+	if r := redis.NewRedisConnection(); r != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := r.Ping(ctx).Err(); err != nil {
+			log.Println("error while pinging redis", err.Error())
+		} else {
+			log.Println("redis connection created")
+		}
+	} else {
+		log.Println("redis connection failed")
 	}
 }
 
