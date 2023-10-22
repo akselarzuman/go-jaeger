@@ -1,4 +1,4 @@
-FROM golang:1.18.0-alpine3.15 as build
+FROM golang:1.21-alpine3.18 as build
 
 WORKDIR /go/jaeger-test-api
 COPY go.mod .
@@ -8,7 +8,7 @@ COPY . .
 
 RUN go build -o main ./api/main.go
 
-FROM alpine:3.15.2 as final
+FROM alpine:3.18 as final
 WORKDIR /root/
 COPY --from=build /go/jaeger-test-api/main .
 
