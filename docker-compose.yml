@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.44
+    image: jaegertracing/jaeger-collector:1.55
     container_name: jaeger-collector
     restart: on-failure
     depends_on:
@@ -18,7 +18,7 @@ services:
       - SPAN_STORAGE_TYPE=elasticsearch
   
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.44
+    image: jaegertracing/jaeger-query:1.55
     container_name: jaeger-query
     restart: on-failure
     command:
