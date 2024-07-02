@@ -1,3 +1,6 @@
+lint:
+	golangci-lint run
+
 start-env:
 	docker compose up --build -d
 

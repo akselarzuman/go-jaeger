@@ -22,7 +22,7 @@ func NewMongo() *Mongo {
 		SetMonitor(otelmongo.NewMonitor()).
 		ApplyURI(uri)
 
-	c, err := mongo.NewClient(opt)
+	c, err := mongo.Connect(context.Background(), opt)
 	if err != nil {
 		log.Fatal(err.Error())
 		return nil
@@ -30,11 +30,6 @@ func NewMongo() *Mongo {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
-	if err := c.Connect(ctx); err != nil {
-		log.Fatal(err.Error())
-		return nil
-	}
 
 	if err := c.Ping(ctx, nil); err != nil {
 		log.Fatal(err.Error())

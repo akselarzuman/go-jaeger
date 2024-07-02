@@ -1,11 +1,13 @@
 package opentelemetry
 
 import (
+	"context"
+	"fmt"
 	"os"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -20,9 +22,12 @@ import (
 func NewJaegerTraceProvider() (*tracesdk.TracerProvider, error) {
 	url := os.Getenv("JAEGER_URL")
 
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+	exp, err := otlptracehttp.New(context.Background(),
+		otlptracehttp.WithEndpoint(url),
+		otlptracehttp.WithInsecure(),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create exporter: %w", err)
 	}
 
 	tp := tracesdk.NewTracerProvider(
