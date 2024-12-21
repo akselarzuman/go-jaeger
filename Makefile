@@ -4,6 +4,9 @@ lint:
 start-env:
 	docker compose up --build -d
 
+stop-env:
+	docker compose down
+
 start-minikube:
 	minikube start --driver=docker
 
